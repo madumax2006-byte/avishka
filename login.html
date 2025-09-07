@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Avishka | Authentication</title>
+    <!-- BoxIcons -->
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Reset and Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        :root {
+            --primary-black: #0a0a0a;
+            --secondary-black: #141414;
+            --primary-gold: #FFD700;
+            --secondary-gold: #D4AF37;
+            --text-color: #f5f5f5;
+            --transition: all 0.3s ease;
+        }
+        
+        /* Light Mode Variables */
+        [data-theme="light"] {
+            --primary-black: #f5f5f5;
+            --secondary-black: #e0e0e0;
+            --text-color: #0a0a0a;
+            --primary-gold: #D4AF37;
+            --secondary-gold: #b8940f;
+        }
+        
+        body {
+            background-color: var(--primary-black);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
+            padding: 20px;
+            position: relative;
+        }
+        
+        /* Background Animation */
+        .background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+        }
+        
+        .bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--primary-gold);
+            opacity: 0.1;
+            animation: float 15s infinite ease-in-out;
+        }
+        
+        .bg-circle:nth-child(1) {
+            width: 300px;
+            height: 300px;
+            top: -100px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+        
+        .bg-circle:nth-child(2) {
+            width: 500px;
+            height: 500px;
+            bottom: -150px;
+            right: -150px;
+            animation-delay: -5s;
+        }
+        
+        .bg-circle:nth-child(3) {
+            width: 200px;
+            height: 200px;
+            top: 50%;
+            left: 70%;
+            animation-delay: -10s;
+        }
+        
+        @keyframes float {
+            0%, 100% {
+                transform: translateY(0) scale(1);
+            }
+            50% {
+                transform: translateY(-20px) scale(1.05);
+            }
+        }
+        
+        /* Auth Container */
+        .auth-container {
+            width: 100%;
+            max-width: 450px;
+            position: relative;
+        }
+        
+        /* Form Box - Glass Effect */
+        .form-box {
+            background: rgba(20, 20, 20, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 16px;
+            padding: 40px 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            transition: var(--transition);
+            transform: translateY(20px);
+            opacity: 0;
+            animation: fadeUp 0.8s forwards 0.5s;
+        }
+        
+        [data-theme="light"] .form-box {
+            background: rgba(224, 224, 224, 0.7);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+        }
+        
+        @keyframes fadeUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .form-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(255, 215, 0, 0.15);
+        }
+        
+        .logo {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .logo h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--primary-gold);
+        }
+        
+        .logo span {
+            color: var(--text-color);
+        }
+        
+        .logo p {
+            font-size: 1rem;
+            margin-top: 8px;
+            opacity: 0.8;
+        }
+        
+        /* Form Tabs */
+        .form-tabs {
+            display: flex;
+            margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 8px;
+            padding: 4px;
+            position: relative;
+        }
+        
+        .tab-btn {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            background: transparent;
+            border: none;
+            color: var(--text-color);
+            font-weight: 500;
+            cursor: pointer;
+            border-radius: 6px;
+            z-index: 2;
+            transition: var(--transition);
+        }
+        
+        .tab-indicator {
+            position: absolute;
+            height: calc(100% - 8px);
+            width: calc(50% - 4px);
+            background: var(--primary-gold);
+            border-radius: 6px;
+            z-index: 1;
+            transition: var(--transition);
+            top: 4px;
+            left: 4px;
+        }
+        
+        .tab-indicator.signup {
+            transform: translateX(100%);
+        }
+        
+        .tab-btn.active {
+            color: var(--primary-black);
+        }
+        
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.9;
+        }
+        
+        .input-with-icon {
+            position: relative;
+        }
+        
+        .input-with-icon i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--primary-gold);
+            font-size: 1.1rem;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 14px 14px 14px 45px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            border-radius: 8px;
+            color: var(--text-color);
+            transition: var(--transition);
+            font-size: 1rem;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary-gold);
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.2);
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .remember-forgot {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .remember {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .remember input {
+            accent-color: var(--primary-gold);
+        }
+        
+        .forgot-link {
+            color: var(--primary-gold);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+        
+        .forgot-link:hover {
+            text-decoration: underline;
+        }
+        
+        .btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--primary-gold);
+            color: var(--primary-black);
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn:hover {
+            background: var(--secondary-gold);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.3);
+        }
+        
+        .btn i {
+            font-size: 1.2rem;
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 25px 0;
+            color: rgba(255, 255, 255, 0.5);
+            font-size: 0.9rem;
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: "";
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.2);
+        }
+        
+        .divider span {
+            padding: 0 15px;
+        }
+        
+        .social-login {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        
+        .social-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: var(--text-color);
+            font-size: 1.2rem;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+        
+        .social-btn:hover {
+            background: var(--primary-gold);
+            color: var(--primary-black);
+            transform: translateY(-3px);
+        }
+        
+        /* Theme Toggle */
+        .theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            z-index: 10;
+        }
+        
+        .theme-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(20, 20, 20, 0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 215, 0, 0.2);
+            color: var(--primary-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .theme-btn:hover {
+            background: var(--primary-gold);
+            color: var(--primary-black);
+            transform: rotate(30deg);
+        }
+        
+        /* Form Toggle */
+        .form-content {
+            display: none;
+            animation: fadeIn 0.5s forwards;
+        }
+        
+        .form-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Responsive Design */
+        @media screen and (max-width: 480px) {
+            .form-box {
+                padding: 30px 20px;
+            }
+            
+            .logo h1 {
+                font-size: 2rem;
+            }
+            
+            .remember-forgot {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .theme-btn {
+                width: 45px;
+                height: 45px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background Animation -->
+    <div class="background">
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+        <div class="bg-circle"></div>
+    </div>
+    
+    <!-- Theme Toggle -->
+    <div class="theme-toggle">
+        <button class="theme-btn" id="theme-toggle">
+            <i class='bx bx-moon'></i>
+        </button>
+    </div>
+    
+    <!-- Auth Container -->
+    <div class="auth-container">
+        <div class="form-box">
+            <div class="logo">
+                <h1>A<span>vishka</span></h1>
+                <p id="form-subtitle">Welcome back! Please sign in to your account</p>
+            </div>
+            
+            <!-- Form Tabs -->
+            <div class="form-tabs">
+                <div class="tab-indicator" id="tab-indicator"></div>
+                <button class="tab-btn active" data-tab="signin">Sign In</button>
+                <button class="tab-btn" data-tab="signup">Sign Up</button>
+            </div>
+            
+            <!-- Sign In Form -->
+            <div class="form-content active" id="signin-form">
+                <form id="signin-form-element">
+                    <div class="form-group">
+                        <label for="signin-email">Email Address</label>
+                        <div class="input-with-icon">
+                            <i class='bx bx-envelope'></i>
+                            <input type="email" id="signin-email" class="form-input" placeholder="Enter your email" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signin-password">Password</label>
+                        <div class="input-with-icon">
+                            <i class='bx bx-lock-alt'></i>
+                            <input type="password" id="signin-password" class="form-input" placeholder="Enter your password" required>
+                        </div>
+                    </div>
+                    
+                    <div class="remember-forgot">
+                        <label class="remember">
+                            <input type="checkbox"> Remember me
+                        </label>
+                        <a href="#" class="forgot-link">Forgot Password?</a>
+                    </div>
+                    
+                    <button type="submit" class="btn">
+                        <i class='bx bx-log-in'></i> Sign In
+                    </button>
+                </form>
+                
+                <div class="divider">
+                    <span>Or continue with</span>
+                </div>
+                
+                <div class="social-login">
+                    <button class="social-btn">
+                        <i class='bx bxl-google'></i>
+                    </button>
+                    <button class="social-btn">
+                        <i class='bx bxl-facebook'></i>
+                    </button>
+                    <button class="social-btn">
+                        <i class='bx bxl-github'></i>
+                    </button>
+                </div>
+                
+                <div class="auth-redirect">
+                    Don't have an account? <a href="#" class="auth-link" id="show-signup">Sign Up</a>
+                </div>
+            </div>
+            
+            <!-- Sign Up Form -->
+            <div class="form-content" id="signup-form">
+                <form id="signup-form-element">
+                    <div class="form-group">
+                        <label for="signup-name">Full Name</label>
+                        <div class="input-with-icon">
+                            <i class='bx bx-user'></i>
+                            <input type="text" id="signup-name" class="form-input" placeholder="Enter your full name" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signup-email">Email Address</label>
+                        <div class="input-with-icon">
+                            <i class='bx bx-envelope'></i>
+                            <input type="email" id="signup-email" class="form-input" placeholder="Enter your email" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signup-password">Password</label>
+                        <div class="input-with-icon">
+                            <i class='bx bx-lock-alt'></i>
+                            <input type="password" id="signup-password" class="form-input" placeholder="Create a password" required>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="signup-confirm">Confirm Password</label>
+                        <div class="input-with-icon">
+                            <i class='bx bx-lock'></i>
+                            <input type="password" id="signup-confirm" class="form-input" placeholder="Confirm your password" required>
+                        </div>
+                    </div>
+                    
+                    <div class="remember">
+                        <input type="checkbox" id="terms-agree" required>
+                        <label for="terms-agree">I agree to the <a href="#" class="forgot-link">Terms & Conditions</a></label>
+                    </div>
+                    
+                    <button type="submit" class="btn">
+                        <i class='bx bx-user-plus'></i> Create Account
+                    </button>
+                </form>
+                
+                <div class="divider">
+                    <span>Or sign up with</span>
+                </div>
+                
+                <div class="social-login">
+                    <button class="social-btn">
+                        <i class='bx bxl-google'></i>
+                    </button>
+                    <button class="social-btn">
+                        <i class='bx bxl-facebook'></i>
+                    </button>
+                    <button class="social-btn">
+                        <i class='bx bxl-github'></i>
+                    </button>
+                </div>
+                
+                <div class="auth-redirect">
+                    Already have an account? <a href="#" class="auth-link" id="show-signin">Sign In</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Theme Toggle Functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+        
+        // Check for saved theme preference or use the system preference
+        const currentTheme = localStorage.getItem('theme') || (prefersDarkScheme.matches ? 'dark' : 'light');
+        
+        if (currentTheme === 'light') {
+            document.body.setAttribute('data-theme', 'light');
+        }
+        
+        themeToggle.addEventListener('click', () => {
+            let theme = 'dark';
+            if (document.body.getAttribute('data-theme') === 'light') {
+                theme = 'dark';
+                themeToggle.innerHTML = '<i class="bx bx-moon"></i>';
+            } else {
+                theme = 'light';
+                themeToggle.innerHTML = '<i class="bx bx-sun"></i>';
+            }
+            document.body.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+        });
+        
+        // Update theme icon based on current theme
+        if (document.body.getAttribute('data-theme') === 'light') {
+            themeToggle.innerHTML = '<i class="bx bx-sun"></i>';
+        }
+        
+        // Form Toggle Functionality
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabIndicator = document.getElementById('tab-indicator');
+        const signinForm = document.getElementById('signin-form');
+        const signupForm = document.getElementById('signup-form');
+        const showSignupLink = document.getElementById('show-signup');
+        const showSigninLink = document.getElementById('show-signin');
+        const formSubtitle = document.getElementById('form-subtitle');
+        
+        // Function to switch forms
+        function switchForm(formToShow) {
+            if (formToShow === 'signin') {
+                tabButtons[0].classList.add('active');
+                tabButtons[1].classList.remove('active');
+                tabIndicator.classList.remove('signup');
+                signinForm.classList.add('active');
+                signupForm.classList.remove('active');
+                formSubtitle.textContent = 'Welcome back! Please sign in to your account';
+            } else {
+                tabButtons[0].classList.remove('active');
+                tabButtons[1].classList.add('active');
+                tabIndicator.classList.add('signup');
+                signinForm.classList.remove('active');
+                signupForm.classList.add('active');
+                formSubtitle.textContent = 'Create your account and join us today';
+            }
+        }
+        
+        // Add event listeners to tab buttons
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                switchForm(button.dataset.tab);
+            });
+        });
+        
+        // Add event listeners to links at the bottom of forms
+        showSignupLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchForm('signup');
+        });
+        
+        showSigninLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            switchForm('signin');
+        });
+        
+        // Form validation and submission
+        const signinFormElement = document.getElementById('signin-form-element');
+        const signupFormElement = document.getElementById('signup-form-element');
+        
+        if (signinFormElement) {
+            signinFormElement.addEventListener('submit', (e) => {
+                e.preventDefault();
+                // Add your sign in logic here
+                console.log('Sign In form submitted');
+            });
+        }
+        
+        if (signupFormElement) {
+            signupFormElement.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const password = document.getElementById('signup-password').value;
+                const confirmPassword = document.getElementById('signup-confirm').value;
+                
+                if (password !== confirmPassword) {
+                    alert('Passwords do not match!');
+                    return;
+                }
+                
+                // Add your sign up logic here
+                console.log('Sign Up form submitted');
+            });
+        }
+        
+        // Add focus effects to form inputs
+        const formInputs = document.querySelectorAll('.form-input');
+        
+        formInputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.parentElement.style.transform = 'translateY(-3px)';
+            });
+            
+            input.addEventListener('blur', () => {
+                input.parentElement.parentElement.style.transform = 'translateY(0)';
+            });
+        });
+    </script>
+</body>
+</html>
