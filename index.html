@@ -64,6 +64,15 @@
             --transition: all 0.3s ease;
         }
         
+        /* Light Mode Variables */
+        [data-theme="light"] {
+            --primary-black: #f5f5f5;
+            --secondary-black: #e0e0e0;
+            --text-color: #0a0a0a;
+            --primary-gold: #D4AF37;
+            --secondary-gold: #b8940f;
+        }
+        
         html {
             scroll-behavior: smooth;
         }
@@ -73,10 +82,119 @@
             color: var(--text-color);
             overflow-x: hidden;
             line-height: 1.6;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
         
         a, button, .btn {
             cursor: none; /* Hide default cursor for interactive elements */
+        }
+        
+        /* Profile Dropdown */
+        .profile-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .profile-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary-gold);
+            color: var(--primary-black);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            transition: var(--transition);
+            cursor: none;
+        }
+        
+        .profile-icon:hover {
+            transform: scale(1.1);
+        }
+        
+        .dropdown-content {
+            position: absolute;
+            right: 0;
+            top: 50px;
+            background: var(--secondary-black);
+            min-width: 180px;
+            border-radius: 8px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            z-index: 1002;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: var(--transition);
+        }
+        
+        .dropdown-content.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .dropdown-item {
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: var(--transition);
+            cursor: none;
+        }
+        
+        .dropdown-item:hover {
+            background: rgba(255, 215, 0, 0.1);
+        }
+        
+        .dropdown-item i {
+            font-size: 1.2rem;
+            color: var(--primary-gold);
+        }
+        
+        .theme-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        
+        .theme-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        
+        .slider {
+            position: absolute;
+            cursor: none;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        
+        input:checked + .slider {
+            background-color: var(--primary-gold);
+        }
+        
+        input:checked + .slider:before {
+            transform: translateX(26px);
         }
         
         /* Mobile Nav Toggle */
@@ -182,6 +300,12 @@
             .overlay.show {
                 opacity: 1;
                 visibility: visible;
+            }
+            
+            /* Profile dropdown adjustments for mobile */
+            .dropdown-content {
+                right: -50px;
+                top: 45px;
             }
         }
         
@@ -332,6 +456,11 @@
             transition: var(--transition);
         }
         
+        [data-theme="light"] header {
+            background: rgba(245, 245, 245, 0.9);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+        }
+        
         header.scrolled {
             padding: 0.7rem 0;
             box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
@@ -395,6 +524,10 @@
             position: relative;
             overflow: hidden;
             background: linear-gradient(135deg, rgba(10, 10, 10, 0.9) 0%, rgba(20, 20, 20, 0.8) 100%);
+        }
+        
+        [data-theme="light"] #hero {
+            background: linear-gradient(135deg, rgba(245, 245, 245, 0.9) 0%, rgba(224, 224, 224, 0.8) 100%);
         }
         
         .hero-content {
@@ -1080,6 +1213,34 @@
                 </ul>
             </div>
             
+            <div class="profile-dropdown">
+                <div class="profile-icon" id="profile-icon">
+                    <i class='bx bx-user'></i>
+                </div>
+                <div class="dropdown-content" id="dropdown-content">
+                    <div class="dropdown-item">
+                        <i class='bx bx-moon'></i>
+                        <span>Dark Mode</span>
+                        <label class="theme-switch">
+                            <input type="checkbox" id="theme-toggle">
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                    <a href="#about" class="dropdown-item">
+                        <i class='bx bx-user'></i>
+                        <span>My Profile</span>
+                    </a>
+                    <a href="#contact" class="dropdown-item">
+                        <i class='bx bx-envelope'></i>
+                        <span>Contact Me</span>
+                    </a>
+                    <a href="#" class="dropdown-item">
+                        <i class='bx bx-cog'></i>
+                        <span>Settings</span>
+                    </a>
+                </div>
+            </div>
+            
             <button class="nav-toggle" id="nav-toggle">
                 <span></span>
                 <span></span>
@@ -1121,7 +1282,7 @@
                     <div class="about-info">
                         <div class="info-item">
                             <i class='bx bx-chevron-right info-icon'></i>
-                            <span><strong>Age:</strong> 28</span>
+                            <span><strong>Age:</strong> 19</span>
                         </div>
                         <div class="info-item">
                             <i class='bx bx-chevron-right info-icon'></i>
@@ -1129,15 +1290,15 @@
                         </div>
                         <div class="info-item">
                             <i class='bx bx-chevron-right info-icon'></i>
-                            <span><strong>Phone:</strong> +94 123 4567</span>
+                            <span><strong>Phone:</strong> +94 77 282 3687</span>
                         </div>
                         <div class="info-item">
                             <i class='bx bx-chevron-right info-icon'></i>
-                            <span><strong>Email:</strong> hello@avishka.com</span>
+                            <span><strong>Email:</strong> avishkamadushan462@gmail.com</span>
                         </div>
                         <div class="info-item">
                             <i class='bx bx-chevron-right info-icon'></i>
-                            <span><strong>City:</strong> Colombo, Sri Lanka</span>
+                            <span><strong>City:</strong> Kurunegala, Sri Lanka</span>
                         </div>
                         <div class="info-item">
                             <i class='bx bx-chevron-right info-icon'></i>
@@ -1161,7 +1322,7 @@
                 <div class="skill-category">
                     <div class="skill-header">
                         <i class='bx bx-pencil skill-icon'></i>
-                        <h3 class="skill-title">Graphic Design</h3>
+                        <h3 class="skill-title">Graphic Design</3>
                     </div>
                     <p>Creating visually stunning designs that communicate messages effectively and captivate audiences.</p>
                     
@@ -1202,7 +1363,7 @@
                         <i class='bx bx-code skill-icon'></i>
                         <h3 class="skill-title">Programming</h3>
                     </div>
-                    <p>Developing robust, efficient, and scalable solutions using the latest technologies and frameworks.</p>
+                    <p>Developing robust, efficient and scalable solutions using the latest technologies and frameworks.</p>
                     
                     <div class="skill-list">
                         <div class="skill-item">
@@ -1454,7 +1615,7 @@
                         <i class='bx bx-map contact-icon'></i>
                         <div>
                             <h3>Location</h3>
-                            <p>Colombo, Sri Lanka</p>
+                            <p>Kurunegala, Sri Lanka</p>
                         </div>
                     </div>
                     
@@ -1462,7 +1623,7 @@
                         <i class='bx bx-envelope contact-icon'></i>
                         <div>
                             <h3>Email</h3>
-                            <p>hello@avishka.com</p>
+                            <p>avishkamadushan462@gmail.com</p>
                         </div>
                     </div>
                     
@@ -1470,7 +1631,7 @@
                         <i class='bx bx-phone contact-icon'></i>
                         <div>
                             <h3>Call Me</h3>
-                            <p>+94 123 4567</p>
+                            <p>+94 77 282 3687</p>
                         </div>
                     </div>
                     
@@ -1486,19 +1647,19 @@
                 <div class="contact-form">
                     <form id="contactForm">
                         <div class="form-group">
-                            <input type="text" class="form-input" placeholder="Your Name" required>
+                            <input type="text" class="form-input" id="name" placeholder="Your Name" required>
                         </div>
                         
                         <div class="form-group">
-                            <input type="email" class="form-input" placeholder="Your Email" required>
+                            <input type="email" class="form-input" id="email" placeholder="Your Email" required>
                         </div>
                         
                         <div class="form-group">
-                            <input type="text" class="form-input" placeholder="Subject">
+                            <input type="text" class="form-input" id="subject" placeholder="Subject">
                         </div>
                         
                         <div class="form-group">
-                            <textarea class="form-input" placeholder="Your Message" required></textarea>
+                            <textarea class="form-input" id="message" placeholder="Your Message" required></textarea>
                         </div>
                         
                         <button type="submit" class="btn">Send Message</button>
@@ -1593,6 +1754,43 @@
             document.body.style.overflow = '';
         });
 
+        // Profile Dropdown Toggle
+        const profileIcon = document.getElementById('profile-icon');
+        const dropdownContent = document.getElementById('dropdown-content');
+        
+        profileIcon.addEventListener('click', (e) => {
+            e.stopPropagation();
+            dropdownContent.classList.toggle('show');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (!profileIcon.contains(e.target) && !dropdownContent.contains(e.target)) {
+                dropdownContent.classList.remove('show');
+            }
+        });
+
+        // Theme Toggle Functionality
+        const themeToggle = document.getElementById('theme-toggle');
+        const prefersDarkScheme = window.matchMedia('(prefers-color-scheme: dark)');
+        
+        // Check for saved theme preference or use the system preference
+        const currentTheme = localStorage.getItem('theme') || (prefersDarkScheme.matches ? 'dark' : 'light');
+        
+        if (currentTheme === 'light') {
+            document.body.setAttribute('data-theme', 'light');
+            themeToggle.checked = true;
+        }
+        
+        themeToggle.addEventListener('change', () => {
+            let theme = 'dark';
+            if (themeToggle.checked) {
+                theme = 'light';
+            }
+            document.body.setAttribute('data-theme', theme);
+            localStorage.setItem('theme', theme);
+        });
+
         // Custom Cursor
         const cursor = document.querySelector('.cursor');
         const cursorFollower = document.querySelector('.cursor-follower');
@@ -1608,7 +1806,7 @@
         });
         
         // Cursor effects on interactive elements
-        const interactiveElements = document.querySelectorAll('a, button, .btn, .nav-toggle, .scroll-top, .form-input, textarea, .newsletter-btn');
+        const interactiveElements = document.querySelectorAll('a, button, .btn, .nav-toggle, .scroll-top, .form-input, textarea, .newsletter-btn, .profile-icon, .dropdown-item, .theme-switch');
         
         interactiveElements.forEach(element => {
             element.addEventListener('mouseenter', () => {
@@ -1641,6 +1839,31 @@
             setTimeout(() => {
                 ripple.remove();
             }, 600);
+        });
+
+        // WhatsApp Integration for Contact Form
+        const contactForm = document.getElementById('contactForm');
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const subject = document.getElementById('subject').value;
+            const message = document.getElementById('message').value;
+            
+            // Format the message for WhatsApp
+            const whatsappMessage = 
+            `🔰Name: ${name}%0A🔰Email: ${email}%0A🔰Subject: ${subject}%0A🔰Message: ${message}`;
+            
+            // Create WhatsApp URL
+            const whatsappURL = `https://wa.me/94772823687?text=${whatsappMessage}`;
+            
+            // Open WhatsApp in a new tab
+            window.open(whatsappURL, '_blank');
+            
+            // Show confirmation message
+            alert('Thank you for your message! You will be redirected to WhatsApp to complete sending your message.');
+            contactForm.reset();
         });
 
         // Animate Skill Bars on Scroll
@@ -1681,7 +1904,7 @@
         const skillCategories = document.querySelectorAll('.skill-category');
         const timelineItems = document.querySelectorAll('.timeline-item');
         const contactItems = document.querySelectorAll('.contact-item');
-        const contactForm = document.querySelector('.contact-form');
+        const contactFormEl = document.querySelector('.contact-form');
         const socialLinks = document.querySelectorAll('.social-link');
         const footerLinks = document.querySelectorAll('.footer-link');
         
@@ -1728,8 +1951,8 @@
                 }
             });
             
-            if (contactForm && contactForm.getBoundingClientRect().top < triggerBottom) {
-                contactForm.classList.add('visible');
+            if (contactFormEl && contactFormEl.getBoundingClientRect().top < triggerBottom) {
+                contactFormEl.classList.add('visible');
             }
             
             socialLinks.forEach(link => {
@@ -1748,14 +1971,6 @@
         window.addEventListener('scroll', checkScroll);
         // Initial check in case some elements are already in view
         window.addEventListener('load', checkScroll);
-
-        // Form Submission
-        const contactFormEl = document.getElementById('contactForm');
-        contactFormEl.addEventListener('submit', (e) => {
-            e.preventDefault();
-            alert('Thank you for your message! I will get back to you soon.');
-            contactFormEl.reset();
-        });
 
         // Newsletter Form Submission
         const newsletterForm = document.querySelector('.newsletter-form');
